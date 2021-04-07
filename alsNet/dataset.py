@@ -9,8 +9,10 @@ import logging
 class Dataset():
     ATTR_EXLUSION_LIST = ['X', 'Y', 'Z', 'raw_classification', 'Classification',
                           'flag_byte', 'scan_angle_rank', 'user_data',
-                          'pt_src_id', 'gps_time']
-    ATTR_EXTRA_LIST = ['num_returns', 'return_num']
+                          'pt_src_id', 'gps_time', "classification_byte",
+                          "intensity", "classification_flags", "labels", 
+                          "scan_angle", "hard_example", "Amplitude", "profiles"] 
+    ATTR_EXTRA_LIST = [] # ['num_returns', 'return_num']
 
     def __init__(self, file, load=True, multiclass=True, normalize=False):
         self.file = file
@@ -25,10 +27,10 @@ class Dataset():
     def load_data(self):
         file_h = laspy.file.File(self.file, mode='r')
         self._xyz = np.vstack([file_h.x, file_h.y, file_h.z]).transpose()
-        self._classes = file_h.classification
+        self._classes = file_h.reader.get_dimension("labels")
         points = file_h.points['point']
         attr_names = [a for a in points.dtype.names] + Dataset.ATTR_EXTRA_LIST
-        self._features = np.array([getattr(file_h, name) for name in attr_names
+        self._features = np.array([file_h.reader.get_dimension(name) for name in attr_names
                                    if name not in Dataset.ATTR_EXLUSION_LIST]).transpose()
         self._names = [name for name in attr_names if name not in Dataset.ATTR_EXLUSION_LIST]
 
@@ -53,7 +55,7 @@ class Dataset():
     def labels(self):
         if self._xyz is None:
             self.load_data()
-        ret_val = self._classes if self.multiclass else (self._classes != 2).astype('int8') + 2
+        ret_val = self._classes # if self.multiclass else (self._classes != 2).astype('int8') + 2
         return ret_val
 
     @property
@@ -237,6 +239,7 @@ class kNNBatchDataset(Dataset):
             self.currIdx += 1
         if centers:
             _, idx = self.tree.query(centers, k=self.k)
+            idx = np.squeeze(idx)
             return self.points_and_features[idx, :], self.labels[idx]
         else:
             return None, None

@@ -17,10 +17,11 @@ def main(in_files, density, kNN, out_folder, thinFactor):
         print(file_pattern)
         for file in glob.glob(file_pattern):
             print("Loading file %s" % file)
-            d = dataset.kNNBatchDataset(file=file, k=int(kNN*thinFactor), spacing=spacing)
+            d = dataset.kNNBatchDataset(file=file, k=int(kNN*thinFactor), spacing=spacing, load=True)
             while True:
                 print("Processing batch %d/%d" % (d.currIdx, d.num_batches))
                 points_and_features, labels = d.getBatches(batch_size=1)
+                print(points_and_features.shape, labels.shape)
                 idx_to_use = np.random.choice(range(int(thinFactor*kNN)), kNN)
                 names = d.names
                 out_name = d.filename.replace('.la', '_c%04d.la' % d.currIdx)  # laz or las
@@ -59,8 +60,8 @@ if __name__ == '__main__':
                         required=True,
                         help='input files (wildcard supported)',
                         action='append')
-    parser.add_argument('--density', type=float, required=True, help='average point density')
-    parser.add_argument('--kNN', default=200000, type=int, required=True, help='how many points per batch [default: 200000]')
+    parser.add_argument('--density', type=float, default=15, help='average point density')
+    parser.add_argument('--kNN', default=200000, type=int, help='how many points per batch [default: 200000]')
     parser.add_argument('--outFolder', required=True, help='where to write output files and statistics to')
     parser.add_argument('--thinFactor', type=float, default=1., help='factor to thin out points by (2=use half of the points)')
     args = parser.parse_args()
