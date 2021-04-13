@@ -27,7 +27,8 @@ class Dataset():
     def load_data(self):
         file_h = laspy.file.File(self.file, mode='r')
         self._xyz = np.vstack([file_h.x, file_h.y, file_h.z]).transpose()
-        self._classes = file_h.reader.get_dimension("labels")
+        self._classes = np.array(file_h.reader.get_dimension("labels"), dtype=np.int)
+        # self.labels = file_h.reader.get_dimension("labels")
         points = file_h.points['point']
         attr_names = [a for a in points.dtype.names] + Dataset.ATTR_EXTRA_LIST
         self._features = np.array([file_h.reader.get_dimension(name) for name in attr_names

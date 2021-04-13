@@ -21,13 +21,13 @@ def main(in_files, density, kNN, out_folder, thinFactor):
             while True:
                 print("Processing batch %d/%d" % (d.currIdx, d.num_batches))
                 points_and_features, labels = d.getBatches(batch_size=1)
-                print(points_and_features.shape, labels.shape)
+                # print(points_and_features.shape, labels.shape)
                 idx_to_use = np.random.choice(range(int(thinFactor*kNN)), kNN)
                 names = d.names
                 out_name = d.filename.replace('.la', '_c%04d.la' % d.currIdx)  # laz or las
                 out_path = os.path.join(out_folder, out_name)
                 if points_and_features is not None:
-                    stats = dataset.ChunkedDataset.chunkStatistics(labels[0], 10)
+                    stats = dataset.ChunkedDataset.chunkStatistics(labels, 10)
                     rest = 1 - (stats['relative'][2] +
                                 stats['relative'][3] +
                                 stats['relative'][4] +
@@ -44,8 +44,8 @@ def main(in_files, density, kNN, out_folder, thinFactor):
                     stddev = np.std(perc) * 100
                     list_entry = [out_name, "%.3f" % stddev, *["%.3f" % p for p in perc]]
                     statlist.append(list_entry)
-                    dataset.Dataset.Save(out_path, points_and_features[0][idx_to_use], names,
-                                         labels=labels[0][idx_to_use], new_classes=None)
+                    dataset.Dataset.Save(out_path, points_and_features[idx_to_use], names,
+                                         labels=labels[idx_to_use], new_classes=None)
                 else:  # no more data
                     break
 
