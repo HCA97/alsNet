@@ -79,10 +79,10 @@ def main(args):
     print("%s datasets loaded." % len(datasets_th))
     sys.stdout.flush()
 
-    inst = AlsNetContainer(num_feat=3, num_classes=30, num_points=200000, output_base=args.outDir, score_sample=10,
+    inst = AlsNetContainer(num_feat=0, num_classes=2, num_points=10000, output_base=args.outDir, score_sample=10,
                            arch=arch,
                            learning_rate=lr,
-                           dropout=0.55,
+                           dropout=0.0,
                            loss_fn=simple_loss if args.lossFn == "simple" else fp_high_loss)
 
     if args.continueModel is not None:
@@ -95,14 +95,14 @@ def main(args):
     for j in range(args.multiTrain):
         for i in range(len(datasets_th)//train_size):
             if i > 0:
-                test_ds = datasets_th[i*train_size+1]
+                test_ds = datasets_th[min(i * train_size + 1, len(datasets_th)-1)]
                 inst.test_single(test_ds,
                                  save_to=os.path.join(args.outDir, os.path.basename(test_ds.file).replace(".la", "_test.la")),
                                  save_prob=True)
             print("Training datasets %s to %s (%s total)" % (i*train_size,
-                                                             min((i+1)*train_size, len(datasets_th)),
+                                                             min((i+1)*train_size, len(datasets_th)-1),
                                                              len(datasets_th)))
-            inst.fit(datasets_th[i*train_size:min((i+1)*train_size, len(datasets_th))], new_session=False)
+            inst.fit(datasets_th[i*train_size:min((i+1)*train_size, len(datasets_th)-1)], new_session=False)
             logg.save()
         inst.save_model(os.path.join(args.outDir, 'models', 'model_%d_%d' % (j, i), 'alsNet.ckpt'))
 

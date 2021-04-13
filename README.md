@@ -60,3 +60,6 @@ The code is released under MIT License (see LICENSE file for details).
 
 * <a href="http://stanford.edu/~rqi/pointnet" target="_blank">PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation</a> by Qi et al. (CVPR 2017 Oral Presentation). Code and data released in <a href="https://github.com/charlesq34/pointnet">GitHub</a>.
 * <a href="http://stanford.edu/~rqi/pointnet2/" target="_blank">PointNet++: Deep Hierarchical Feature Learning on Point Sets in a Metric Space</a> by Qi et al. (NIPS 2017) A hierarchical feature learning framework on point clouds. The PointNet++ architecture applies PointNet recursively on a nested partitioning of the input point set. It also proposes novel layers for point clouds with non-uniform densities.
+
+docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $HOME/Documents/Master/alsNet:/alsNet -w /alsNet --runtime=nvidia -it tensorflow-1.15.5-gpu-all_deps_installed_work_around bash
+

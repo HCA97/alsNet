@@ -7,10 +7,13 @@ venv/
 classification/log/
 alsNet/log/
 part_seg/log/
+logs/
 
 # models
 model.ckpt.*
 *.pickle
 
-#
+# Files
 *.pyc
+*.txt
+*.pkl

@@ -10,7 +10,7 @@ class Dataset():
     ATTR_EXLUSION_LIST = ['X', 'Y', 'Z', 'raw_classification', 'Classification',
                           'flag_byte', 'scan_angle_rank', 'user_data',
                           'pt_src_id', 'gps_time', "classification_byte",
-                          "intensity", "classification_flags", "labels", 
+                          "intensity", "classification_flags", "labels",  "Deviation", "Reflectance",
                           "scan_angle", "hard_example", "Amplitude", "profiles"] 
     ATTR_EXTRA_LIST = [] # ['num_returns', 'return_num']
 
@@ -27,8 +27,12 @@ class Dataset():
     def load_data(self):
         file_h = laspy.file.File(self.file, mode='r')
         self._xyz = np.vstack([file_h.x, file_h.y, file_h.z]).transpose()
-        self._classes = np.array(file_h.reader.get_dimension("labels"), dtype=np.int)
-        # self.labels = file_h.reader.get_dimension("labels")
+
+        try:
+            self._classes = np.array(file_h.reader.get_dimension("labels"), dtype=np.int)
+        except laspy.util.LaspyException as e:
+            self._classes = np.array(file_h.classification, dtype=np.int)
+        
         points = file_h.points['point']
         attr_names = [a for a in points.dtype.names] + Dataset.ATTR_EXTRA_LIST
         self._features = np.array([file_h.reader.get_dimension(name) for name in attr_names
@@ -67,7 +71,9 @@ class Dataset():
     def points_and_features(self):
         if self._xyz is None:
             self.load_data()
-        ret_val = np.hstack((self._xyz, self._features))
+        ret_val = self._xyz
+        if len(self._features) > 0:
+            ret_val = np.hstack((self._xyz, self._features))
         if self.normalize:
             normalize(ret_val)
         return ret_val

@@ -292,15 +292,21 @@ N/A
 
         fig = plt.figure(figsize=(10,4))
 
-        keep_classes = (2, 3, 4, 5, 6, 9)
+        # keep_classes = (2, 3, 4, 5, 6, 9)
+        # for class_id, label, color in zip(keep_classes,
+        #                                   ['ground', 'hi veg', 'med veg', 'lo veg', 'building', 'water'],
+        #                                   ['xkcd:bright purple',
+        #                                    'xkcd:dark green',
+        #                                    'xkcd:kelly green',
+        #                                    'xkcd:lime',
+        #                                    'xkcd:light red',
+        #                                    'xkcd:water blue']
+        #                                   ):
+        keep_classes = (0, 1)
         for class_id, label, color in zip(keep_classes,
-                                          ['ground', 'hi veg', 'med veg', 'lo veg', 'building', 'water'],
+                                          ['ground', 'crop'],
                                           ['xkcd:bright purple',
-                                           'xkcd:dark green',
-                                           'xkcd:kelly green',
-                                           'xkcd:lime',
-                                           'xkcd:light red',
-                                           'xkcd:water blue']
+                                           'xkcd:dark green']
                                           ):
             plt.plot(self.inst.train_history.points_seen,
                      np.cumsum(self.inst.train_history.class_points_timeline(class_id)),

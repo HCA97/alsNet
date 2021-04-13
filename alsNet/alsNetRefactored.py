@@ -250,8 +250,8 @@ class AlsNetContainer(BaseEstimator, ClassifierMixin):
                                                     self._is_training: False})
             if self.savefiles:
                 for level, x in enumerate(xyz):
-                    print(xyz[level][0], feat[level][0])
-                    print(xyz[level][0].shape, feat[level][0].shape)
+                    # print(xyz[level][0], feat[level][0])
+                    # print(xyz[level][0].shape, feat[level][0].shape)
                     np.savetxt(os.path.join(self.output_dir, 'xyz%i.xyz' % level), np.hstack((xyz[level][0], feat[level][0])))
                     np.savetxt(os.path.join(self.output_dir, 'xyz%i_in.xyz' % level), np.hstack((xyz[level][0], feat_in[level][0])))
             return softmax
