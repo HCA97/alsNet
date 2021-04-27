@@ -97,7 +97,7 @@ class AlsNetContainer(BaseEstimator, ClassifierMixin):
 
         # initalize variables
         init_op = tf.global_variables_initializer()
-        saver = tf.train.Saver()
+        saver = tf.train.Saver(tf.all_variables())
 
         # Make important vars/ops availiable instance-wide
         self._points_in = points_in
